@@ -29,12 +29,12 @@ building and securing a production multi-model agentic system.
 
 ## Contents
 
-- `threat-analysis.md` — Full threat analysis and detection 
-   architecture
-- `detection/` — Lightweight detection heuristics and 
-   pattern scanners (in progress)
-- `research-questions.md` — Open empirical questions suitable 
-   for investigation
+
+- `threat-analysis.md` — Full threat analysis and detection architecture
+- `detection/` — Lightweight detection heuristics and pattern scanners
+- `notes/` — Active research notes and open design questions. Start with [`orientation-as-injection-primitive`](notes/2026-07-26-orientation-as-injection-primitive.md)
+- `research-questions.md` — Open empirical questions suitable for investigation
+
 
 ---
 
