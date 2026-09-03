@@ -98,20 +98,45 @@ passage. Both improve on *the model got confused about what was an instruction*.
 ## 4. What the established defenses are already doing
 
 The framing does not repudiate current praxis. It makes a claim about what
-current it actually accomplishes, and about which part of it bears load.
+current praxis actually accomplishes, and about which part of it bears load.
 
 Delimiter defenses enclose untrusted content in tags and assert in the system
 prompt that the enclosed region is datum. That is a declaration of orientation,
 and it works to the degree it works because it makes explicit what was formerly
-inferred. Instruction-hierarchy approaches train models to weight sources by
-privilege: the same declaration, moved from the prompt into the weights.
-Architectural separation routes untrusted content through components holding no
-privileged capability, which is enforcement by construction: the flip cannot
-happen, because the privileged path never sees the span.
+inferred. Instruction-hierarchy approaches (Wallace et al., 2024) train models
+to weight sources by privilege: the same declaration, moved from the prompt into
+the weights. Architectural separation routes untrusted content through components
+holding no privileged capability, which is enforcement by construction: the flip
+cannot happen, because the privileged path never sees the span.
 
-None of the three examines the string. All of them govern position. The claim
-here is that this is the operative mechanism in every defense that has held up,
-and that naming it as the primitive--rather than counting it as one technique
+The most developed instance of architectural separation is CaMeL (Debenedetti et
+al., 2025), which factors an agentic system into a Privileged LLM that plans and
+a Quarantined LLM that processes untrusted content, connected by provenance tags
+that track whether each datum descended from trusted or untrusted input. This is
+orientation enforcement carried to its logical conclusion: provenance tagging is
+an explicit, per-datum declaration of orientation, maintained across tool calls
+and model boundaries. CaMeL demonstrates that the approach works--it reduces
+attack success rates to near zero on its benchmark--but the mechanism requires
+complete architectural control. The defender must own the entire pipeline, factor
+it into the privileged/quarantined split, and specify a capability policy
+governing which actions may consume untrusted data. That is a greenfield
+commitment. It does not help the team that already has a deployed pipeline and
+needs to know where the ambiguity is.
+
+Independently, Ye, Cui, and Hadfield-Menell (2026) arrive at the same core
+claim from an empirical direction. Their *role confusion* framing treats
+injection as the model misclassifying a span's role--instruction versus
+data--which is the orientation distinction by another name. Their finding that
+matters here: probing the model's latent space, they show that style dominates
+tags in determining how the model reads a span's role. Delimiters help, but the
+model's internal geometry does not reliably track them. The instruction/data
+boundary leaks in representation space even when it holds in token space. This
+is empirical confirmation that orientation is the right variable, and that
+declaring it is necessary but not automatically sufficient.
+
+None of these defenses examines the string. All of them govern position. The
+claim here is that this is the operative mechanism in every defense that has held
+up, and that naming it as the primitive--rather than counting it as one technique
 among several--clarifies what to build and what to measure.
 
 ## 5. Specimen
@@ -172,6 +197,27 @@ the same span under different assignments of figure and ground; where its
 inferred orientation varies, that variance is a signal available before any
 particular exploit exists. This prediction needs testing most and is supported
 here least.
+
+The practical distinction matters. CaMeL enforces orientation through
+provenance--a guarantee that requires owning the architecture end to end.
+Traversal-variance proposes detecting orientation failure as a diagnostic that
+can be applied to an existing pipeline without refactoring it. The two are not
+competitors. Provenance tagging is the stronger guarantee; traversal-variance is
+the cheaper measurement. A team that cannot adopt CaMeL's architecture--because
+the pipeline is already deployed, or because they integrate third-party
+components they do not control--still needs a way to find the boundaries where
+orientation is ambiguous. That is the gap traversal-variance is shaped to fill:
+not a replacement for architectural enforcement, but an audit tool for pipelines
+that lack it.
+
+Ye et al.'s role probes (2026) occupy a middle position. Their probes detect
+orientation confusion in latent space, but they are supervised classifiers
+trained on labeled instruction/data examples. Traversal-variance, if it works,
+would be unsupervised: it measures representational alignment discrepancy between
+a span's intended role (given by its architectural position) and its perceived
+role (given by the model's internal geometry) without requiring labeled attack
+examples. Whether that unsupervised signal exists with sufficient
+signal-to-noise is the open empirical question. It has not been tested.
 
 ## 7. Open questions
 
